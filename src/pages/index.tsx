@@ -1,56 +1,67 @@
-import { GetStaticProps } from 'next';
-import Head from 'next/head';
-import { SubscribeButton } from '../components/SubscribeButton';
-import { stripe } from '../services/stripe';
+import { Fragment } from "react";
+import { GetStaticProps } from "next";
+import Image from "next/image";
+import Head from "next/head";
 
-import styles from './home.module.scss';
+import { stripe } from "../services/stripe";
+
+import SubscribeButton from "../components/SubscribeButton";
+
+import styles from "./home.module.scss";
+
+interface Product {
+  priceId: string;
+  amount: number;
+}
 
 interface HomeProps {
-  product: {
-    priceId: string,
-    amount: string,
-  }
+  product: Product;
 }
 
 export default function Home({ product }: HomeProps) {
+  const formattedPrice = product.amount.toLocaleString("en-US", {
+    currency: "USD",
+    style: "currency",
+  });
+
   return (
-    <>
+    <Fragment>
       <Head>
         <title>Home | ig.news</title>
       </Head>
-
       <main className={styles.contentContainer}>
         <section className={styles.hero}>
-          <span>👏 Hey, welcome</span>
-          <h1>News about the <span>React</span> world.</h1>
+          <span>👏 Hey, Helcome</span>
+          <h1>
+            News about <span>React</span> world.
+          </h1>
           <p>
-            Get access to all the publications <br/>
-            <span>for { product.amount } month</span>
+            Get access to all the publications <br />
+            <span>for {formattedPrice} month</span>
           </p>
           <SubscribeButton />
         </section>
-
-        <img src="/images/avatar.svg" alt="Girl coding"/>
+        <Image
+          src="/images/avatar.svg"
+          alt="Girl Coding"
+          width="100%"
+          height="100%"
+        />
       </main>
-    </>
-  )
+    </Fragment>
+  );
 }
 
-export const getStaticProps: GetStaticProps = async () => {
-  const price = await stripe.prices.retrieve('price_1IYJ7WCrN0slKqO6rQQZVvOz');
+export const getStaticProps: GetStaticProps<HomeProps> = async () => {
+  const price = await stripe.prices.retrieve("price_1J6DhnJufjAAU5DkV9t0xKOp");
 
-  const product = {
+  const product: Product = {
     priceId: price.id,
-    amount: new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(price.unit_amount / 100),
-  }
+    amount: price.unit_amount / 100,
+  };
 
   return {
-    props: {
-      product,
-    },
+    props: { product },
     revalidate: 60 * 60 * 24, // 24 horas
-  }
+  };
 };
