@@ -47,7 +47,7 @@ export default async function subscribe(
     customer: customerId,
     payment_method_types: ["card"],
     billing_address_collection: "required",
-    line_items: [{ price: "price_1J6DhnJufjAAU5DkV9t0xKOp", quantity: 1 }],
+    line_items: [{ price: "price_1LuHbAIeSwo5Cg6qQ7wQ2umF", quantity: 1 }],
     mode: "subscription",
     allow_promotion_codes: true,
     success_url: process.env.STRIPE_SUCCESS_URL,
